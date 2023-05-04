@@ -559,7 +559,7 @@ def main():
     
     INPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/' 
     OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotPredictPulse/result/'
-    subject ='ayumu'
+    subject ='yamasaki1'
     normalized = True
     log_space = False
     sample_rate = 60
@@ -603,8 +603,8 @@ def main():
 
 
 
-    save_previous_bp_marked = pulse_dir + "predict_hemoglobin_bp_marked.png"
-    save_previous_bp_marked_part = pulse_dir + "predict_hemoglobin_bp_marked_part.png"
+    save_previous_bp_marked = OUTPUT_DIR + "predict_hemoglobin_bp_marked.png"
+    save_previous_bp_marked_part =OUTPUT_DIR + "predict_hemoglobin_bp_marked_part.png"
         
 
     visualize_pulse(pulse_previous_bp, previous_peak1_index, previous_peak2_index, save_previous_bp_marked)

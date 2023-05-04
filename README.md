@@ -13,6 +13,7 @@
       INPUT_DIR =''
       OUTPUT_DIR =''
       subject
+      (ほとんどの場合はsubjectを「１」で取得したcsvの名前に変更する)
 
 
 
