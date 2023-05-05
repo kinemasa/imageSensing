@@ -536,12 +536,13 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
 
     if part:
         if wiener:
-            ax.plot(pulse1[:332], color='orangered')
+            ax.plot(pulse1[:300], color='orangered')
         else:
-            ax.plot(pulse1[:332])
-        plt.xticks([0, 66, 133, 198, 265, 332])
-        peak1_index = peak1_index[peak1_index < 332]
-        peak2_index = peak2_index[peak2_index < 332]
+            ax.plot(pulse1[:300])
+        plt.xticks([0, 100, 200, 305])
+        
+        peak1_index = peak1_index[peak1_index < 300]
+        peak2_index = peak2_index[peak2_index < 300]
     else:
         if wiener:
             ax.plot(x, pulse1, color='orangered')
@@ -550,7 +551,7 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
         plt.xticks([0, 332, 665, 997, 1330, 1663, 1995])
     # ax.grid(color="gray", linestyle="--")
     ax.scatter(x[peak1_index], pulse1[peak1_index], marker='x', color='green', s=250)
-    # ax.scatter(x[peak2_index], pulse1[peak2_index], marker='x', color='green', s=250)
+    ax.scatter(x[peak2_index], pulse1[peak2_index], marker='x', color='green', s=250)
     plt.savefig(save_filename)
     plt.close()
 
@@ -559,8 +560,8 @@ def main():
     
     INPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/' 
     OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotPredictPulse/result/'
-    subject ='yamasaki1'
-    normalized = True
+    subject ='ayumu1'
+    normalized = False
     log_space = False
     sample_rate = 60
     # wavelength_lists = [["800", "735"], ["865", "735"], ["865", "800"], ["930", "735"], ["930", "800"], ["930", "865"]]
@@ -603,8 +604,8 @@ def main():
 
 
 
-    save_previous_bp_marked = OUTPUT_DIR + "predict_hemoglobin_bp_marked.png"
-    save_previous_bp_marked_part =OUTPUT_DIR + "predict_hemoglobin_bp_marked_part.png"
+    save_previous_bp_marked = OUTPUT_DIR + subject +"_predict_hemoglobin_bp_marked.png"
+    save_previous_bp_marked_part =OUTPUT_DIR + subject +"_predict_hemoglobin_bp_marked_part.png"
         
 
     visualize_pulse(pulse_previous_bp, previous_peak1_index, previous_peak2_index, save_previous_bp_marked)

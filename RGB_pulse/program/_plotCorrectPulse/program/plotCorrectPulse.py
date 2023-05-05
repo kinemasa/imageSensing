@@ -23,8 +23,9 @@ def plot_part(subject, save_filename, dir):
     extracted_pulse_csv = np.loadtxt(save_filename, delimiter=",")
     save_filename = dir + subject + "_extracted_pulse_data_part.png"
 
-    plt.plot(extracted_pulse_csv[:1280])
-    plt.xticks([0, 256, 512, 768, 1024, 1280])
+    plt.plot(extracted_pulse_csv[:300])
+    plt.xticks([0, 100, 200, 300])
+    plt.yticks([-200,-100,0,100,200])
     plt.savefig(save_filename)
     plt.close()
 
@@ -391,8 +392,8 @@ def main():
     INPUT_DIR ='/Users/masayakinefuchi/脈波推定/correct_pulseData/'
     OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotCorrectPulse/result/'   
     
-    subject = "yamasaki"
-    sample_rate = 256
+    subject = "ayumu"
+    sample_rate = 60
     
     dir = INPUT_DIR+"subject/"
     
