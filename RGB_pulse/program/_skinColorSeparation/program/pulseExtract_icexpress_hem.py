@@ -16,7 +16,8 @@ def getVideoROI(img):
 
 INPUT_DIR ='/Users/masayakinefuchi/脈波推定/exp-sub/murai/Cam 1/'
 OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/'
-OUTPUT_FILE = OUTPUT_DIR +'murai1' +'.csv'
+subject = 'ayumu'
+OUTPUT_FILE = OUTPUT_DIR +subject +'.csv'
 
 
 
@@ -50,7 +51,7 @@ for f in files:
     time[i] = float(f_sp[3])*3600000+float(f_sp[4])*60000+float(f_sp[5])*1000
 
     img = cv2.imread(f)
-
+    ##ROIの中の画素平均をとる
     pulsewave[i] = np.mean(ss.skinSeparation(img[roi[1]: roi[1] + roi[3], roi[0]: roi[0] + roi[2],:]))
     i += 1
 
