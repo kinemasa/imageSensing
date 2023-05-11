@@ -25,7 +25,7 @@ def detrend_pulse(pulse, sample_rate):
         デトレンドされた脈波
 
     """
-
+    ##逆関数を求める
     def inv_jit(A):
         return np.linalg.inv(A)
 
@@ -36,41 +36,42 @@ def detrend_pulse(pulse, sample_rate):
     used_length = pulse_length - sample_rate
 
     # デトレンド処理 / An Advanced Detrending Method With Application to HRV Analysis
-    pulse_dt = np.zeros(pulse_length)
-    order = len(str(pulse_length))
+    pulse_dt = np.zeros(pulse_length) ##初期化
+    order = len(str(pulse_length))##長さ
     lmd = sample_rate * 12  # サンプルレートによって調節するハイパーパラメータ
     lmd = sample_rate * 12  # サンプルレートによって調節するハイパーパラメータ
     wdth = sample_rate * 1  # データ終端が歪むため，データを分割してデトレンドする場合，wdth分だけ終端を余分に使用する．
     
     if order > 4:
-        splt = int(sample_rate / 16)  # 40
-        T = int(pulse_length / splt)
+        split = int(sample_rate / 16)  # 3
+        T = int(pulse_length / split)#脈波を3分割
         # wdth = T
-        for num in range(splt):
-            print('\r\t[Detrending Pulse] : %d / %d' % (num + 1, splt), end='')
-            # sys.stderr.write('\r\tDetrending Pulse %d / %d' %(num, splt))
-            # sys.stderr.flush()
-            if num < (splt - 1):
-                # I = eye(T + wdth, T + wdth)
-                I = np.identity(T + wdth)
-                flt = np.ones([T + wdth - 2, 1]) * np.array([1, -2, 1])
+        for num in range(split):
+            print('\r\t[Detrending Pulse] : %d / %d' % (num + 1, split), end='')
+            if num < (split - 1):
+                I = np.identity(T + wdth)##指定した大きさ分の単位行列を作成する
+                flt = np.ones([T + wdth - 2, 1]) * np.array([1, -2, 1])##
+                ##2次差分行列を生成
                 D2 = spdiags(flt.T, np.array([0, 1, 2]), T + wdth - 2, T + wdth)
+                ##D2にD2の転置共役の積をかける=
+                ##x  = I -(I+λ^2D2(転置 )＊D2)
                 preinv = I + lmd ** 2 * np.conjugate(D2.T) * D2
-                # preinv = csc_matrix(preinv)
-                # inv_tmp = linalg.inv(preinv)
+                ##逆関数
                 inv_tmp = inv_jit(preinv)
+                
                 tmp = (I - inv_tmp) @ pulse[num * T: (num + 1) * T + wdth]
-                # tmp = (I - np.linalg.inv(I + lmd**2 * D2.T @ D2)) @ pulse[num * T : (num + 1) * T + wdth]
+               
                 tmp = tmp[0: -wdth]
                 pulse_dt[num * T: (num + 1) * T] = tmp
-            else:
+            else:##最後の分割数のとき（今回は３ばんめ）
                 I = eye(T, T)
                 I = np.identity(T)
                 flt = np.ones([T + wdth - 2, 1]) * np.array([1, -2, 1])
+                ##2次差分行列を生成
                 D2 = spdiags(flt.T, np.array([0, 1, 2]), T - 2, T)
+                
                 preinv = I + lmd ** 2 * np.conjugate(D2.T) * D2
-                # preinv = csc_matrix(preinv)
-                # inv_tmp = linalg.inv(preinv)
+                ##逆関数
                 inv_tmp = inv_jit(preinv)
                 tmp = (I - inv_tmp) @ pulse[num * T: (num + 1) * T]
                 pulse_dt[num * T: (num + 1) * T] = tmp
@@ -82,11 +83,10 @@ def detrend_pulse(pulse, sample_rate):
         flt = np.ones([T + wdth - 2, 1]) * np.array([1, -2, 1])
         D2 = spdiags(flt.T, np.array([0, 1, 2]), T - 2, T)
         preinv = I + lmd ** 2 * np.conjugate(D2.T) * D2
-        # preinv = csc_matrix(preinv)
-        # inv_tmp = linalg.inv(preinv)
+       
         inv_tmp = inv_jit(preinv)
         pulse_dt[:] = (I - inv_tmp) @ pulse
-        # pulse_dt[:] = (I - inv_tmp)
+        
 
  
     pulse_dt = pulse_dt[0: used_length]
@@ -194,7 +194,7 @@ def preprocess_pulse(pulse, sample_rate):
     pulse_dt = detrend_pulse(pulse, sample_rate)
 
     # バンドパスフィルタリング / [0.75, 5.0]
-    band_width = [0.75, 4.0]
+    band_width = [0.75, 5.0]
     pulse_bp = bandpass_filter_pulse(pulse_dt, band_width, sample_rate)
 
     # ピーク検出
@@ -536,13 +536,15 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
 
     if part:
         if wiener:
-            ax.plot(pulse1[:300], color='orangered')
+            ax.plot(pulse1[:360], color='orangered')
         else:
-            ax.plot(pulse1[:300])
-        plt.xticks([0, 100, 200, 305])
+            ax.plot(pulse1[:360])
+        plt.xticks([0,60, 120, 180, 240,300,360])
         
-        peak1_index = peak1_index[peak1_index < 300]
-        peak2_index = peak2_index[peak2_index < 300]
+        peak1_index = peak1_index[peak1_index < 360] 
+        peak2_index = peak2_index[peak2_index < 360] 
+     
+        
     else:
         if wiener:
             ax.plot(x, pulse1, color='orangered')
@@ -560,7 +562,7 @@ def main():
     
     INPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/' 
     OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotPredictPulse/result/'
-    subject ='ayumu1'
+    subject ='ayumu'
     normalized = False
     log_space = False
     sample_rate = 60
@@ -577,11 +579,11 @@ def main():
 
     pulse_previous = np.loadtxt(pulse_previous_filename, delimiter=",")
         
-
+    save_previousfilename     = OUTPUT_DIR+ subject+"_predict_hemoglobin.csv"
     save_previous_dt_filename = OUTPUT_DIR+ subject+"_predict_hemoglobin_dt.csv"
     save_previous_bp_filename = OUTPUT_DIR+ subject+"_predict_hemoglobin_bp.csv"
-        
-
+    
+    save_previous_dt_img = OUTPUT_DIR + subject+"_predict_hemoglobin.png"
     save_previous_dt_img = OUTPUT_DIR + subject+"_predict_hemoglobin_dt.png"
     save_previous_dt_img_part = OUTPUT_DIR +subject+ "_predict_hemoglobin_dt_part.png"
     save_previous_bp_img_part = OUTPUT_DIR +subject+ "_predict_hemoglobin_bp_part.png"
@@ -592,7 +594,7 @@ def main():
 
     pulse_previous_dt, pulse_previous_bp, previous_peak1_index, previous_peak2_index = preprocess_pulse(pulse_previous, sample_rate)
         
-
+  
     np.savetxt(save_previous_dt_filename, pulse_previous_dt, delimiter=",")
     np.savetxt(save_previous_bp_filename, pulse_previous_bp, delimiter=",")
         
@@ -601,7 +603,7 @@ def main():
     plot_part(save_previous_bp_filename, save_previous_bp_img_part)
     plot_full(save_previous_bp_filename, save_previous_bp_img_full)
     plot_15s(save_previous_bp_filename, save_previous_bp_img_15s)
-
+   
 
 
     save_previous_bp_marked = OUTPUT_DIR + subject +"_predict_hemoglobin_bp_marked.png"
