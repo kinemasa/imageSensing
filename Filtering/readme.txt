@@ -1,0 +1,11 @@
+average.py 
+平均化フィルタを実装したもの
+INPUT_IMAGEで入力する画像を選択
+filter_sizeでフィルタの大きさを変更する
+
+weight_average.py 
+加重平均化フィルタを実装したもの
+INPUT_IMAGEで入力する画像を選択
+weight_filterでフィルタを変更する悪数はフィルタの合計値
+
+
