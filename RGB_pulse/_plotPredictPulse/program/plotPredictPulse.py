@@ -7,13 +7,13 @@ from scipy.sparse import eye, spdiags
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from bandpass import bandpass_filter_pulse
-from deTrending import detrend_pulse
-from interplolate_nan import interpolate_nan
-from ibi_to_flex import psd_to_frqdomain_feature
-from ibi_to_time import ibi_to_timedomain_feature
-from calculate_hrv2 import calculate_hrv2
-from detect_peak import detect_pulse_peak
+from _bandpass import bandpass_filter_pulse
+from _deTrending import detrend_pulse
+from _interplolate_nan import interpolate_nan
+from _ibi_to_flex import psd_to_frqdomain_feature
+from _ibi_to_time import ibi_to_timedomain_feature
+from _calculate_hrv2 import calculate_hrv2
+from _detect_peak import detect_pulse_peak
 
 def preprocess_pulse(pulse, sample_rate):
     """
@@ -189,8 +189,8 @@ def main():
    
 
 
-    save_bp_marked = OUTPUT_DIR + subject +"/_predict_hemoglobin_bp_marked.png"
-    save_bp_marked_part =OUTPUT_DIR + subject +"/_predict_hemoglobin_bp_marked_part.png"
+    save_bp_marked = OUTPUT_DIR + subject +"_predict_hemoglobin_bp_marked.png"
+    save_bp_marked_part =OUTPUT_DIR + subject +"_predict_hemoglobin_bp_marked_part.png"
         
 
     visualize_pulse(pulse_bp, peak1_index, peak2_index, save_bp_marked)

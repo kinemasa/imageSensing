@@ -3,7 +3,7 @@ import math
 import numpy as np
 from scipy import signal
 from scipy.interpolate import interp1d
-from interplolate_nan import interpolate_nan
+from _interplolate_nan import interpolate_nan
 
 def calculate_hrv2(peak1_indx, peak2_indx, sample_rate):
     """
