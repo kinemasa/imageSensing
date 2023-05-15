@@ -43,8 +43,8 @@ def detrend_pulse(pulse, sample_rate):
     wdth = sample_rate * 1  # データ終端が歪むため，データを分割してデトレンドする場合，wdth分だけ終端を余分に使用する．
     
     if order > 4:
-        split = int(sample_rate / 16)  # 3
-        T = int(pulse_length / split)#脈波を3分割
+        split = int(sample_rate / 6)  # 10
+        T = int(pulse_length / split)#脈波を10分割
         # wdth = T
         for num in range(split):
             print('\r\t[Detrending Pulse] : %d / %d' % (num + 1, split), end='')
@@ -60,8 +60,9 @@ def detrend_pulse(pulse, sample_rate):
                 inv_tmp = inv_jit(preinv)
                 
                 tmp = (I - inv_tmp) @ pulse[num * T: (num + 1) * T + wdth]
-               
+                #width分は除く
                 tmp = tmp[0: -wdth]
+                ##今回の範囲分のデトレンド派を更新する
                 pulse_dt[num * T: (num + 1) * T] = tmp
             else:##最後の分割数のとき（今回は３ばんめ）
                 I = eye(T, T)
@@ -192,7 +193,11 @@ def preprocess_pulse(pulse, sample_rate):
 
     # デトレンド / 脈波の終端切り捨てが発生することに注意
     pulse_dt = detrend_pulse(pulse, sample_rate)
-
+    print(pulse)
+    print(len(pulse))
+    print("トレンド処理")
+    print(pulse_dt)
+    print(len(pulse_dt))
     # バンドパスフィルタリング / [0.75, 5.0]
     band_width = [0.75, 5.0]
     pulse_bp = bandpass_filter_pulse(pulse_dt, band_width, sample_rate)
@@ -560,8 +565,8 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
 
 def main():
     
-    INPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/' 
-    OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotPredictPulse/result/'
+    INPUT_DIR ='/Users/masayakinefuchi/imageSensing/RGB_pulse/program/_skinColorSeparation/result/' 
+    OUTPUT_DIR ='/Users/masayakinefuchi/imageSensing/RGB_pulse/program/_plotPredictPulse/result/'
     subject ='ayumu'
     normalized = False
     log_space = False
