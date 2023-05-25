@@ -10,7 +10,7 @@ def skinSeparation(img):
     """
     openCVのimreadで読み込んだnumpy形式の画像を入力する．
     配列として1pxごと以下のような形の配列として取り出される
-    [[B G R]]
+    [[B G R],[B G R]]
     出力はunsigned 16bit int (uint16) 形式のヘモグロビン画像であるが，
     出力する段階ではdoubleである．
     画像化する場合は出力された画像に対してnp.uint16(img)でキャストする必要がある．
@@ -23,9 +23,10 @@ def skinSeparation(img):
     shading    = np.array([ 1.0000, 1.0000, 1.0000 ])
    
    ##高さ,幅,チャンネル数を画像から取得する
-    height, width, channels = img.shape[:3]##img.shapeによって取得できる
+   
+    height, width, channels = img.shape[:3]
     Img_size = height * width
-    Img_info = [height, width, 3, 1]
+    Img_info = [height, width, channels, 1]
     
     # γ補正用パラメータの取得
     aa = 1
@@ -35,10 +36,7 @@ def skinSeparation(img):
     gg = [1, 1, 1]
     
     # 色ベクトルと照明強度ベクトル
-    vec = np.empty((3,3))
-    vec[0,:] = shading
-    vec[1,:] = melanin
-    vec[2,:] = hemoglobin
+    vec =np.vstack([shading,melanin,hemoglobin])
     
     # 肌色分布平面の法線 = 2つの色ベクトルの外積
     # 平面から法線を求める式(vec(1,:) = [1 1 1]なので式には考慮せず)
@@ -56,24 +54,26 @@ def skinSeparation(img):
     ##画像のBの値を用いてマスクを生成する
     Mask = np.copy(img[:,:,0])
     Mask = np.where(Mask > 0, 1, 0)##条件,True,False
-
+    ##配列を(1×n）から（width × height)へ
     temp_R = np.reshape(Img_r, Img_size)
     temp_G = np.reshape(Img_g, Img_size)
     temp_B = np.reshape(Img_b, Img_size)
 
     temp_RGB = np.array([temp_R, temp_G, temp_B]).T##転置
-    
+    ##元の画像をコピーした画像
     Original_Image = temp_RGB
 
     # 配列の初期化
     DC = 1/255.0 ##画素を０から１までの値にするための変数
-    L = np.zeros((Img_info[0]*Img_info[1]*Img_info[2],1))##要素数が〜一列の配列
-    linearSkin = np.zeros((Img_info[2],Img_size))##０行列の作成
-    S = np.zeros((Img_info[2],Img_size)) 
+    L = np.zeros((width*height*channels,1))##要素数が〜一列の配列
+    linearSkin = np.zeros((channels,Img_size))##０行列の作成
+    
+    ##濃度空間の値の配列
+    densitySpace = np.zeros((channels,Img_size)) 
 
-    img = Original_Image
+    Previous_Image = Original_Image
     ##高さ、幅,channel数の多次元配列化
-    img = np.reshape(img, (Img_info[0], Img_info[1], Img_info[2]))
+    Previous_Image= np.reshape( Previous_Image, (height, width, channels))
    ##(height,width)の形状からheight*widthの一列配列への変換
     img_r = np.reshape(img[:,:,0].T, height*width)
     img_g = np.reshape(img[:,:,1].T, height*width)
@@ -82,42 +82,39 @@ def skinSeparation(img):
     skin = np.array([img_r[:], img_g[:], img_b[:]])
     # -------------------------------------------------------------
 
-    # 画像のガンマ補正(画像の最大値を1に正規化)
-    for j in range(Img_info[2]):
+    # 画像のガンマ補正(画像の最大値を1に正規化)##其々の色に対してガンマ補正を行う
+    for j in range(channels):
        linearSkin[j] = (((skin[j,:].astype(np.float64)-cc)/aa)*(1/gamma)-bb)/gg[j]/255
 
     # マスク画像の作成(黒い部分を除く)
-    img_mask  = np.ones((Img_info[2],Img_size))   # マスク(0 or 1)
-    img_mask2 = np.zeros((Img_info[2],Img_size))       # マスク(DC or 0)
-    
-    img_mask = np.where(linearSkin == 0, 0, 1)
-    img_mask2 = np.where(linearSkin == 0, DC, 0)
+    img_mask = np.zeros((channels,Img_size))      
+    img_mask = np.where(linearSkin == 0, DC, 0)     # マスク(DC or 0)
 
     # 濃度空間(log空間)へ
-    for j in range(Img_info[2]):
-       linearSkin[j] = linearSkin[j] + img_mask2[j]
-       S[j] = -np.log(linearSkin[j])
+    for j in range(channels):
+       linearSkin[j] = linearSkin[j] + img_mask[j]
+       densitySpace[j] = -np.log(linearSkin[j])
        
     ##濃度空間の変換後にマスク画像を適応
-    S = S * img_mask.astype(np.float64)
+    densitySpace =  densitySpace* img_mask.astype(np.float64)
 
     ##ベクトルの開始位置を変更する
     # 肌色空間の起点を0へ
     for i in range(Img_info[2]):
-       S[i] = S[i] - MinSkin[i]
+        densitySpace[i] = densitySpace[i] - MinSkin[i]
 
     # 照明ムラ方向と平行な成分をとおる直線と肌色分布平面との交点を求める
     # housen：肌色分布平面の法線
-    # S：濃度空間でのRGB
+    # densitySpace：濃度空間でのRGB
     # vec：独立成分ベクトル
-    #t = -(法線との濃度空間RGB)の内積/法線と独立性成分のベクトル
-    t = -(np.dot(housen[0],S[0])+np.dot(housen[1],S[1])+np.dot(housen[2],S[2]))/(np.dot(housen[0],vec[0,0])+np.dot(housen[1],vec[0,1])+np.dot(housen[2],vec[0,2]))
+    #t = -(法線との濃度空間RGB)の内積/法線と独立性成分のベクトルの内積
+    t = -(np.dot(housen[0], densitySpace[0])+np.dot(housen[1], densitySpace[1])+np.dot(housen[2], densitySpace[2]))/(np.dot(housen[0],vec[0,0])+np.dot(housen[1],vec[0,1])+np.dot(housen[2],vec[0,2]))
     
     # 陰影除去
     # skin_flat：陰影除去したメラヘモベクトルの平面
-    # rest：陰影成分
-    skin_flat = np.dot(t[:,np.newaxis],vec[0,:][np.newaxis,:]).T + S
-    rest = S - skin_flat
+    # shadowIncident：陰影成分
+    skin_flat = np.dot(t[:,np.newaxis],vec[0,:][np.newaxis,:]).T +  densitySpace
+    shadowIncident =  densitySpace - skin_flat
 
     # *************************************************************
     # 色素濃度の計算
@@ -136,7 +133,7 @@ def skinSeparation(img):
 
     # -------------------------------------------------------------
     #メラニン、ヘモグロビンの成分の行列と他の箇所の配列を縦方向に結合する
-    Comp = np.vstack((Compornent, rest[0,:][np.newaxis,:]))
+    Comp = np.vstack((Compornent, shadowIncident[0,:][np.newaxis,:]))
     ##水平に結合して新しい配列（２、波長数*３,1)を作る
     temp_mhs = np.hstack([Comp[0,:], Comp[1,:], Comp[2,:]])[:,np.newaxis]
     L[:] = temp_mhs 
