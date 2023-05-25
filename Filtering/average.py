@@ -15,7 +15,7 @@ INPUT_IMAGE =path /"data"/"jack.png"
 img = cv2.imread(str(INPUT_IMAGE))
 
 ##opencv filtering
-filter_size = 70
+filter_size = 20
 
 img_blur = cv2.blur(src=img ,ksize=(filter_size,filter_size))
 
