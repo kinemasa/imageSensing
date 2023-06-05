@@ -15,6 +15,10 @@
       subject
       (ほとんどの場合はsubjectを「１」で取得したcsvの名前に変更する)
 
+### _bandpass.py
+バンドパスフィルタをscipyライブラリを用いて作成したもの
+### _detect_peak.py
+バンドパスフィルタをscipyライブラリを用いて作成したもの
 
 
 
