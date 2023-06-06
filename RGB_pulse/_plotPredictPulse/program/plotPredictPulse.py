@@ -151,7 +151,7 @@ def main():
     OUTPUT_DIR =str(path /"_plotPredictPulse"/"result")+"/"
     
     ##dataName
-    subject ='ayumu'
+    subject ='ayumu_eye1'
    ##sample_rate 
     sample_rate = 60
     
@@ -197,7 +197,7 @@ def main():
     visualize_pulse(pulse_bp, peak1_index, peak2_index, save_bp_marked_part, part=True)
       
 
-    ibi1, pulse_rate1, frq1, psd1 = calculate_hrv2(peak1_index, peak2_index, sample_rate)
+    # ibi1, pulse_rate1, frq1, psd1 = calculate_hrv2(peak1_index, peak2_index, sample_rate)
 
 
         
