@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 11 15:59:09 2018
+
+@author: Takahashi
+"""
 
 import numpy as np
 

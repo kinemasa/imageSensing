@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import cv2
 import numpy as np
 import glob
@@ -14,28 +13,19 @@ def getVideoROI(img):
     cv2.destroyAllWindows()
     return roi
 
-INPUT_DIR ='/Users/masayakinefuchi/脈波推定/exp-sub/murai/Cam 1/'
-OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/'
-subject = 'ayumu'
-OUTPUT_FILE = OUTPUT_DIR +subject +'.csv'
-
-
-
-dir_name =INPUT_DIR
+dir_name = '/Volumes/Extreme SSD/ayumu_me/moumaku/'
 files = glob.glob(dir_name+'*')
-
+OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
+subject ='ayumu_eye1'
+OUTPUT_FILE =OUTPUT_DIR +subject +'.csv'
 num = len(files)
-
 img_name = files[0]
 img = cv2.imread(img_name)
 width = int(img.shape[1])
 height = int(img.shape[0])
 
-selected_roi = getVideoROI(img)
-print(selected_roi)
-
-roi = [selected_roi[0],selected_roi[1],selected_roi[0]+100,selected_roi[1]+40]
-print(roi)
+roi = getVideoROI(img)
+##脈波情報と時間を初期化する
 pulsewave = np.zeros(int(num))
 time = np.zeros(int(num))
 
@@ -47,11 +37,11 @@ for f in files:
     f_sp = re.split('[-_ ]',root)
 
     #print(f_sp)
-
+    ##ファイルの名前から時間を取得（icexpressの出力に依存する）
     time[i] = float(f_sp[3])*3600000+float(f_sp[4])*60000+float(f_sp[5])*1000
 
     img = cv2.imread(f)
-    ##ROIの中の画素平均をとる
+    ##平均画素値を色素成分関数に入力して得られたヘモグロビン画像の値で取得
     pulsewave[i] = np.mean(ss.skinSeparation(img[roi[1]: roi[1] + roi[3], roi[0]: roi[0] + roi[2],:]))
     i += 1
 
