@@ -13,10 +13,10 @@ def getVideoROI(img):
     cv2.destroyAllWindows()
     return roi
 
-dir_name = '/Volumes/Extreme SSD/ayumu_me/moumaku/'
+dir_name = '/Volumes/Extreme SSD/ayumu2_open/mogi/'
 files = glob.glob(dir_name+'*')
 OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-subject ='ayumu_eye1'
+subject ='ayumu2-open'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.csv'
 num = len(files)
 img_name = files[0]
@@ -25,6 +25,10 @@ width = int(img.shape[1])
 height = int(img.shape[0])
 
 roi = getVideoROI(img)
+print(roi)
+left, top, width, height = map(int,roi)
+width = 500
+height = 90
 ##脈波情報と時間を初期化する
 pulsewave = np.zeros(int(num))
 time = np.zeros(int(num))
@@ -42,7 +46,7 @@ for f in files:
 
     img = cv2.imread(f)
     ##平均画素値を色素成分関数に入力して得られたヘモグロビン画像の値で取得
-    pulsewave[i] = np.mean(ss.skinSeparation(img[roi[1]: roi[1] + roi[3], roi[0]: roi[0] + roi[2],:]))
+    pulsewave[i] = np.mean(ss.skinSeparation(img[top:top + height, left: left +width ,:]))
     i += 1
 
     sys.stdout.flush()

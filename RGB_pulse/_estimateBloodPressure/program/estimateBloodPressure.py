@@ -397,11 +397,11 @@ def detect_pulse_peak(pulse, sample_rate):
 
 if __name__ == '__main__':
     
-    INPUT_DIR= '/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_skinColorSeparation/result/'
-    subject = 'ayumu1'
+    INPUT_DIR= '/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
+    subject = 'yamasaki2-open-10'
     INPUT_FILE = INPUT_DIR + subject + '.csv'
-    OUTPUT_DIR='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_estimateBloodPressure/result/'
-    OUTPUT_FILE = OUTPUT_DIR  + subject + '.csv'
+    OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_estimateBloodPressure/result/'
+    OUTPUT_FILE = OUTPUT_DIR  + subject +'.csv'
     
     
     

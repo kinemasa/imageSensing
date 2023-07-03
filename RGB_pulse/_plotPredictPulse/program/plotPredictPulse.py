@@ -45,7 +45,7 @@ def preprocess_pulse(pulse, sample_rate):
     pulse_dt = detrend_pulse(pulse, sample_rate)
   
     # バンドパスフィルタリング / [0.75, 5.0]
-    band_width = [0.75, 5.0]
+    band_width = [0.75, 4.0]
     pulse_bp = bandpass_filter_pulse(pulse_dt, band_width, sample_rate)
 
     # ピーク検出
@@ -60,9 +60,9 @@ def plot_part(input_filename, save_filename):
     ax = fig.add_subplot(111)
 
  
-    ax.plot(data_input[:332])
+    ax.plot(data_input[:360])
     ax.grid(color="gray", linestyle="--")
-    plt.xticks([0, 66, 133, 199, 266, 332])
+    plt.xticks([60, 120, 180, 240, 300, 360])
     plt.savefig(save_filename)
     plt.close()
 
@@ -124,13 +124,15 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
 
     if part:
         if wiener:
-            ax.plot(pulse1[:360], color='orangered')
+            ax.plot(pulse1[60:360], color='orangered')
         else:
-            ax.plot(pulse1[:360])
-        plt.xticks([0,60, 120, 180, 240,300,360])
+            ax.plot(pulse1[60:360])
+        plt.xticks([0,60,120, 180, 240, 300])
         
         peak1_index = peak1_index[peak1_index < 360] 
+      
         peak2_index = peak2_index[peak2_index < 360] 
+    
      
         
     else:
@@ -138,8 +140,8 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
         ax.plot(x, pulse1)
         plt.xticks([0, 332, 665, 997, 1330, 1663, 1995])
     # ax.grid(color="gray", linestyle="--")
-    ax.scatter(x[peak1_index], pulse1[peak1_index], marker='x', color='green', s=250)
-    ax.scatter(x[peak2_index], pulse1[peak2_index], marker='x', color='green', s=250)
+    # ax.scatter(x[peak1_index], pulse1[peak1_index], marker='x', color='green', s=250)
+    # ax.scatter(x[peak2_index], pulse1[peak2_index], marker='x', color='green', s=250)
     plt.savefig(save_filename)
     plt.close()
 
@@ -151,7 +153,7 @@ def main():
     OUTPUT_DIR =str(path /"_plotPredictPulse"/"result")+"/"
     
     ##dataName
-    subject ='ayumu_eye1'
+    subject ='ayumu2-open'
    ##sample_rate 
     sample_rate = 60
     

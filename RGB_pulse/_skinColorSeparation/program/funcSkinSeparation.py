@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 11 15:59:09 2018
-
-@author: Takahashi
-"""
 
 import numpy as np
 
@@ -30,10 +25,7 @@ def skinSeparation(img):
     gg = [1, 1, 1]
     
     # 色ベクトルと照明強度ベクトル
-    vec = np.empty((3,3))
-    vec[0,:] = shading
-    vec[1,:] = melanin
-    vec[2,:] = hemoglobin
+    vec =np.vstack([shading,melanin,hemoglobin])
     
     # 肌色分布平面の法線 = 2つの色ベクトルの外積
     # 平面から法線を求める式(vec(1,:) = [1 1 1]なので式には考慮せず)
@@ -61,12 +53,12 @@ def skinSeparation(img):
 
     # 配列の初期化
     DC = 1/255.0;
-    L = np.zeros((Img_info[0]*Img_info[1]*Img_info[2],1))
-    linearSkin = np.zeros((Img_info[2],Img_size))
-    S = np.zeros((Img_info[2],Img_size)) 
+    L = np.zeros((height*width*channels,1))
+    linearSkin = np.zeros((channels,Img_size))
+    S = np.zeros((channels,Img_size)) 
 
     img = Original_Image
-    img = np.reshape(img, (Img_info[0], Img_info[1], Img_info[2]))
+    img = np.reshape(img, (height, width, channels))
 
     img_r = np.reshape(img[:,:,0].T, height*width)
     img_g = np.reshape(img[:,:,1].T, height*width)
@@ -76,18 +68,18 @@ def skinSeparation(img):
     # -------------------------------------------------------------
 
     # 画像のガンマ補正(画像の最大値を1に正規化)
-    for j in range(Img_info[2]):
+    for j in range(channels):
        linearSkin[j] = (((skin[j,:].astype(np.float64)-cc)/aa)*(1/gamma)-bb)/gg[j]/255
 
     # マスク画像の作成(黒い部分を除く)
-    img_mask  = np.ones((Img_info[2],Img_size))   # マスク(0 or 1)
-    img_mask2 = np.zeros((Img_info[2],Img_size))       # マスク(DC or 0)
+    img_mask  = np.ones((channels,Img_size))   # マスク(0 or 1)
+    img_mask2 = np.zeros((channels,Img_size))       # マスク(DC or 0)
     
     img_mask = np.where(linearSkin == 0, 0, 1)
     img_mask2 = np.where(linearSkin == 0, DC, 0)
 
     # 濃度空間(log空間)へ
-    for j in range(Img_info[2]):
+    for j in range(channels):
        linearSkin[j] = linearSkin[j] + img_mask2[j]
        S[j] = -np.log(linearSkin[j])
     
@@ -152,19 +144,19 @@ def skinSeparation(img):
     bp[bp>1.0] = 1.0
     bp[bp<0.0] = 0.0
 
-    rp = np.reshape(rp, (Img_info[1], Img_info[0]))
-    gp = np.reshape(gp, (Img_info[1], Img_info[0]))
-    bp = np.reshape(bp, (Img_info[1], Img_info[0]))
+    rp = np.reshape(rp, (width,height))
+    gp = np.reshape(gp, (width, height))
+    bp = np.reshape(bp, (width, height))
 
     # データ結合
-    I_exp = np.empty((Img_info[0],Img_info[1],3))
+    I_exp = np.empty((height,width,3))
     I_exp[:,:,0] = rp.T
     I_exp[:,:,1] = gp.T
     I_exp[:,:,2] = bp.T
 
     f_img = I_exp
     # マスク画像の作成
-    Mask3 = np.empty((Img_info[0],Img_info[1],3))
+    Mask3 = np.empty((height,width,3))
     Mask3[:,:,0] = Mask
     Mask3[:,:,1] = Mask
     Mask3[:,:,2] = Mask
@@ -173,8 +165,8 @@ def skinSeparation(img):
     SL_Com = L_Hem
 
     # 色素画像の取得
-    L_Vec = np.zeros((Img_info[0]*Img_info[1]*Img_info[2], 1))
-    L_Obj = np.zeros((Img_info[2], Img_size))
+    L_Vec = np.zeros((height*width*channels, 1))
+    L_Obj = np.zeros((channels, Img_size))
     
     for i in range(np.size(SL_Com[0])):
        # 色ベクトルに各濃度を重み付ける
@@ -184,7 +176,7 @@ def skinSeparation(img):
     temp_rgb = np.hstack([L_Obj[0,:], L_Obj[1,:], L_Obj[2,:]])
     L_Vec = temp_rgb
 
-    img2 = np.reshape(L_Vec, (Img_info[2], Img_info[1], Img_info[0])).T
+    img2 = np.reshape(L_Vec, (channels, width,height)).T
     
     img_er = np.exp(-img2[:,:,0])
     img_eg = np.exp(-img2[:,:,1])
