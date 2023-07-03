@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 def load_pulse(sample_rate, pulse_filename, save_filename):
     pulse_data = pd.read_csv(pulse_filename)
     
-    start_time =0
-    end_time =60
+    start_time =20
+    end_time =50
     start = sample_rate * start_time
     end = start + sample_rate * end_time+1
 
@@ -19,13 +19,13 @@ def load_pulse(sample_rate, pulse_filename, save_filename):
     extracted_pulse_data.to_csv(save_filename, header=False, index=False)
 
 
-def plot_part(subject, save_filename, dir):
+def plot_part(subject, save_filename,OUTPUT_DIR,sample_rate):
     extracted_pulse_csv = np.loadtxt(save_filename, delimiter=",")
-    save_filename = dir + subject + "_extracted_pulse_data_part.png"
+    save_filename = OUTPUT_DIR + subject + "_extracted_pulse_data_part.png"
 
-    plt.plot(extracted_pulse_csv[:300])
-    plt.xticks([0, 100, 200, 300])
-    plt.yticks([-200,-100,0,100,200])
+    plt.plot(extracted_pulse_csv[sample_rate:sample_rate *6])
+    plt.xticks([0,sample_rate,sample_rate*2, sample_rate*3,sample_rate*4,sample_rate*5])
+    #plt.yticks([-200,-100,0,100,200])
     plt.savefig(save_filename)
     plt.close()
 
@@ -388,35 +388,32 @@ def psd_to_frqdomain_feature(frq, psd):
 
 
 def main():
+   
+    INPUT_DIR ='/Volumes/Extreme SSD/pulse_data/'
+    OUTPUT_DIR ='/Users/masayakinefuchi/imageSensing/RGB_pulse/_plotCorrectPulse/result/'   
     
-    INPUT_DIR ='/Users/masayakinefuchi/脈波推定/correct_pulseData/'
-    OUTPUT_DIR ='/Users/masayakinefuchi/脈波推定/imageSensing/RGB_pulse/program/_plotCorrectPulse/result/'   
-    
-    subject = "ayumu"
-    sample_rate = 60
-    
-    dir = INPUT_DIR+"subject/"
-    
-    pulse_filename = dir + subject + "_pulse_data_hoge.csv"
-    save_filename = dir + subject + "_extracted_pulse_data.csv"
+    subject = "yamasaki2-open"
+    sample_rate = 256
+    pulse_filename = INPUT_DIR + subject + ".txt"
+    save_filename = OUTPUT_DIR + subject + "_extracted_pulse_data.csv"
 
     load_pulse(sample_rate, pulse_filename, save_filename)
-    plot_part(subject, save_filename, dir)
-    plot_15s(subject, save_filename, dir)
-    plot_full(subject, save_filename, dir)
+    plot_part(subject, save_filename, OUTPUT_DIR,sample_rate)
+    plot_15s(subject, save_filename, OUTPUT_DIR)
+    plot_full(subject, save_filename, OUTPUT_DIR)
 
     pulse = np.loadtxt(save_filename, delimiter=",")
     peak1_index, peak2_index = detect_pulse_peak(pulse, sample_rate)
 
 
-    save_pulse_marked = dir + subject + "_extracted_pulse_marked.png"
+    save_pulse_marked = OUTPUT_DIR + subject + "_extracted_pulse_marked.png"
     visualize_pulse(pulse, peak1_index, peak2_index, save_pulse_marked)
 
-    ibi1, pulse_rate1, frq1, psd1 = calculate_hrv2(peak1_index, peak2_index, sample_rate)
-    t_feature = ibi_to_timedomain_feature(ibi1)
-    f_feature = psd_to_frqdomain_feature(frq1, psd1)
-    np.savetxt(dir+subject+"time_feature.csv", t_feature, delimiter=",")
-    np.savetxt(dir+subject+"freq_feature.csv", f_feature, delimiter=",")
+    # ibi1, pulse_rate1, frq1, psd1 = calculate_hrv2(peak1_index, peak2_index, sample_rate)
+    # t_feature = ibi_to_timedomain_feature(ibi1)
+    # f_feature = psd_to_frqdomain_feature(frq1, psd1)
+    # np.savetxt(OUTPUT_DIR+subject+"time_feature.csv", t_feature, delimiter=",")
+    # np.savetxt(OUTPUT_DIR+subject+"freq_feature.csv", f_feature, delimiter=",")
 
 
 if __name__ == "__main__":
