@@ -13,10 +13,10 @@ def getVideoROI(img):
     cv2.destroyAllWindows()
     return roi
 
-dir_name = '/Volumes/Extreme SSD/ayumu2_open/mogi/'
+dir_name = '/Volumes/Extreme SSD/ayumu/kao64-1/'
 files = glob.glob(dir_name+'*')
 OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-subject ='ayumu2-open'
+subject ='ayumu64'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.csv'
 num = len(files)
 img_name = files[0]
