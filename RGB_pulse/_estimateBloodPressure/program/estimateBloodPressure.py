@@ -398,7 +398,7 @@ def detect_pulse_peak(pulse, sample_rate):
 if __name__ == '__main__':
     
     INPUT_DIR= '/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-    subject = 'yamasaki2-open-10'
+    subject = 'yamasaki32-me-hoho'
     INPUT_FILE = INPUT_DIR + subject + '.csv'
     OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_estimateBloodPressure/result/'
     OUTPUT_FILE = OUTPUT_DIR  + subject +'.csv'
@@ -454,7 +454,7 @@ if __name__ == '__main__':
     d_pulse = detrend_pulse(pulse, SAMPLE_RATE)
 
     # d_pulseのバンドパスフィルタリング処理
-    bp_pulse = bandpass_filter_pulse(d_pulse, [0.75, 4.0], SAMPLE_RATE)
+    bp_pulse = bandpass_filter_pulse(d_pulse, [0.75, 3.0], SAMPLE_RATE)
 
     # ピーク検出
     peak1, peak2 = detect_pulse_peak(bp_pulse, SAMPLE_RATE)
@@ -462,8 +462,8 @@ if __name__ == '__main__':
     # 脈波データから心拍変動を算出
     ibi1, pulse_rate1, frq1, psd1 = calculate_hrv2(peak1, peak2, SAMPLE_RATE)
 
-    t_feature = ibi_to_timedomain_feature(ibi1)
-    f_feature = psd_to_frqdomain_feature(frq1, psd1)
+    # t_feature = ibi_to_timedomain_feature(ibi1)
+    # f_feature = psd_to_frqdomain_feature(frq1, psd1)
 
     # np.savetxt('time_feature.csv',t_feature,delimiter=',')
     # np.savetxt('freq_feature.csv',f_feature,delimiter=',')

@@ -389,10 +389,10 @@ def psd_to_frqdomain_feature(frq, psd):
 
 def main():
    
-    INPUT_DIR ='/Volumes/Extreme SSD/pulse_data/'
+    INPUT_DIR ='/Volumes/Extreme SSD/pulsedata2/'
     OUTPUT_DIR ='/Users/masayakinefuchi/imageSensing/RGB_pulse/_plotCorrectPulse/result/'   
     
-    subject = "yamasaki2-open"
+    subject = "yamasaki32-me-HR"
     sample_rate = 256
     pulse_filename = INPUT_DIR + subject + ".txt"
     save_filename = OUTPUT_DIR + subject + "_extracted_pulse_data.csv"

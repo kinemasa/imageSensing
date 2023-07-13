@@ -13,22 +13,44 @@ def getVideoROI(img):
     cv2.destroyAllWindows()
     return roi
 
-dir_name = '/Volumes/Extreme SSD/ayumu/kao64-1/'
+dir_name = '/Volumes/Extreme SSD/tumura3/gm-1/'
 files = glob.glob(dir_name+'*')
 OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-subject ='ayumu64'
+subject ='gantei'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.csv'
 num = len(files)
 img_name = files[0]
 img = cv2.imread(img_name)
+img_copy=cv2.imread(img_name)
+
 width = int(img.shape[1])
 height = int(img.shape[0])
 
 roi = getVideoROI(img)
 print(roi)
-left, top, width, height = map(int,roi)
-width = 500
-height = 90
+width=50
+height=50
+x1 = 924
+y1 = 450
+#Crop Image
+selectRoi_crop = img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2])]
+fixedRoi_crop = img[int(y1):int(y1+height),int(x1):int(x1+width)]
+
+cv2.rectangle(img_copy,
+              pt1 =(x1,y1),
+              pt2 =(x1+width,y1+height),
+              color =(0,255,0),
+              thickness =1,
+              lineType =cv2.LINE_4,
+              shift =0
+              )
+cv2.imwrite("selectedRoi.png", selectRoi_crop)
+cv2.imwrite("fixedRoi.png", fixedRoi_crop)
+cv2.imwrite("output.png",img_copy)
+
+
+
+
 ##脈波情報と時間を初期化する
 pulsewave = np.zeros(int(num))
 time = np.zeros(int(num))
@@ -46,7 +68,10 @@ for f in files:
 
     img = cv2.imread(f)
     ##平均画素値を色素成分関数に入力して得られたヘモグロビン画像の値で取得
-    pulsewave[i] = np.mean(ss.skinSeparation(img[top:top + height, left: left +width ,:]))
+    #pulsewave[i] = np.mean(ss.skinSeparation(img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2]),:],"Hemoglobin"))
+    pulsewave[i] = np.mean(img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2]),:])
+    #pulsewave[i] = np.mean(ss.skinSeparation(img[int(roi[1]):int(roi[1]+height),int(roi[0]):int(roi[0]+width),:],"Hemoglobin"))
+    #pulsewave[i] = np.mean(ss.skinSeparation(img[int(y1):int(y1+height),int(x1):int(x1+width),:],"Hemoglobin"))
     i += 1
 
     sys.stdout.flush()

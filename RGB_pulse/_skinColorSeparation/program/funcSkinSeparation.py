@@ -164,9 +164,9 @@ def skinSeparation(GBR_img,output):
 
     # データ結合
     I_exp = np.empty((height,width,3))
-    I_exp[:,:,0] = rp.T
-    I_exp[:,:,1] = gp.T
-    I_exp[:,:,2] = bp.T
+    I_exp[:,:,0] = r_img.T
+    I_exp[:,:,1] = g_img.T
+    I_exp[:,:,2] = b_img.T
     f_img = I_exp
     
     # マスク画像の作成

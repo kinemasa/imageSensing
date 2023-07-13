@@ -45,7 +45,7 @@ def preprocess_pulse(pulse, sample_rate):
     pulse_dt = detrend_pulse(pulse, sample_rate)
   
     # バンドパスフィルタリング / [0.75, 5.0]
-    band_width = [0.75, 4.0]
+    band_width = [0.75, 3.0]
     pulse_bp = bandpass_filter_pulse(pulse_dt, band_width, sample_rate)
 
     # ピーク検出
@@ -79,6 +79,19 @@ def plot_15s(input_filename, save_filename):
     plt.xticks([0, 332, 665, 997])
     plt.savefig(save_filename)
     plt.close()
+    
+def plot_5s(input_filename, save_filename):
+    data_input = np.loadtxt(input_filename, delimiter=",")
+
+    fig = plt.figure(figsize=(14, 6))
+    ax = fig.add_subplot(111)
+
+   
+    ax.plot(data_input[:320])
+    ax.grid(color="gray", linestyle="--")
+    plt.xticks([0, 60, 120, 180,240])
+    plt.savefig(save_filename)
+    plt.close()
 
 
 def plot_full(input_filename, save_filename):
@@ -90,7 +103,7 @@ def plot_full(input_filename, save_filename):
 
     ax.plot(data_input)
     ax.grid(color="gray", linestyle="--")
-    plt.xticks([0, 332, 665, 997, 1330, 1663, 1995])
+    plt.xticks([0, 300, 600, 900, 1200, 1500, 1800])
     plt.savefig(save_filename)
     plt.close()
 
@@ -124,10 +137,10 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
 
     if part:
         if wiener:
-            ax.plot(pulse1[60:360], color='orangered')
+            ax.plot(pulse1[0:360], color='orangered')
         else:
-            ax.plot(pulse1[60:360])
-        plt.xticks([0,60,120, 180, 240, 300])
+            ax.plot(pulse1[0:360])
+        plt.xticks([0,60,120, 180, 240, 300,360])
         
         peak1_index = peak1_index[peak1_index < 360] 
       
@@ -138,9 +151,9 @@ def visualize_pulse(pulse1, peak1_index, peak2_index, save_filename, wiener=Fals
     else:
         
         ax.plot(x, pulse1)
-        plt.xticks([0, 332, 665, 997, 1330, 1663, 1995])
+        plt.xticks([0, 300, 600, 900, 1200, 1500, 1800])
     # ax.grid(color="gray", linestyle="--")
-    # ax.scatter(x[peak1_index], pulse1[peak1_index], marker='x', color='green', s=250)
+    ax.scatter(x[peak1_index], pulse1[peak1_index], marker='x', color='green', s=250)
     # ax.scatter(x[peak2_index], pulse1[peak2_index], marker='x', color='green', s=250)
     plt.savefig(save_filename)
     plt.close()
@@ -153,11 +166,11 @@ def main():
     OUTPUT_DIR =str(path /"_plotPredictPulse"/"result")+"/"
     
     ##dataName
-    subject ='ayumu2-open'
+    subject ='gantei'
    ##sample_rate 
     sample_rate = 60
     
-    
+
     ##importData
     pulse_dir = INPUT_DIR
     pulse_filename = pulse_dir + subject+".csv"
@@ -174,6 +187,7 @@ def main():
     save_bp_img_part = OUTPUT_DIR +subject+ "_predict_hemoglobin_bp_part.png"
     save_bp_img_full = OUTPUT_DIR + subject+"_predict_hemoglobin_bp_full.png"
     save_bp_img_15s = OUTPUT_DIR + subject+"_predict_hemoglobin_bp_15s.png"
+    save_bp_img_5s = OUTPUT_DIR + subject+"_predict_hemoglobin_bp_5s.png"
 
         
 
@@ -188,6 +202,7 @@ def main():
     plot_part(save_bp_filename, save_bp_img_part)
     plot_full(save_bp_filename, save_bp_img_full)
     plot_15s(save_bp_filename, save_bp_img_15s)
+    plot_5s(save_bp_filename, save_bp_img_5s)
    
 
 

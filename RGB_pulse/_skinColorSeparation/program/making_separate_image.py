@@ -10,21 +10,21 @@ import funcSkinSeparation as ss
 
 
 ## input directory name
-dir_name = '/Volumes/Extreme SSD/ayumu/kao64-1/'
+dir_name = '/Volumes/Extreme SSD/murai3/murai32-me/'
 files = glob.glob(dir_name+'*')
 num = len(files)
 img_num = files[0]
-
+#img_num = "/Volumes/Extreme SSD/murai3/murai32-me/2023-07-06 16-41-10.554_murai32-me_594_593.bmp"
 
 ##import image
 img = cv2.imread(img_num)
 
 ## output name
 OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-subject ='murai3-1'
+subject ='murai32-me'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.png'
 
 ##output image
-output = ss.skinSeparation(img,"Melanin")
+output = ss.skinSeparation(img,"Hemoglobin")
 outPutImg =output.astype(np.uint16)
 cv2.imwrite(OUTPUT_FILE,outPutImg)

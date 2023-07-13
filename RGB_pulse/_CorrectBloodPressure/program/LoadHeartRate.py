@@ -23,10 +23,10 @@ def load_pulse(sample_rate, pulse_filename):
 
 def main():
    
-    INPUT_DIR ='/Volumes/Extreme SSD/pulse_data/'
+    INPUT_DIR ='/Volumes/Extreme SSD/pulsedata2/'
     # OUTPUT_DIR ='/Users/masayakinefuchi/imageSensing/RGB_pulse/_plotCorrectPulse/result/'   
     
-    subject = "yamasaki2-close-HR"
+    subject = "yamasaki32-me-HR"
     sample_rate = 256
     pulse_filename = INPUT_DIR + subject + ".txt"
     load_pulse(sample_rate,pulse_filename)
