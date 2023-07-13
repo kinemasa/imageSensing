@@ -19,6 +19,8 @@ OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/r
 subject ='gantei'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.csv'
 num = len(files)
+
+##import picture
 img_name = files[0]
 img = cv2.imread(img_name)
 img_copy=cv2.imread(img_name)
@@ -28,12 +30,15 @@ height = int(img.shape[0])
 
 roi = getVideoROI(img)
 print(roi)
+##select position ROI_size
 width=50
 height=50
 x1 = 924
 y1 = 450
-#Crop Image
+
+#Crop Image(ROI)
 selectRoi_crop = img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2])]
+#Crop   Image(selected_ROI)
 fixedRoi_crop = img[int(y1):int(y1+height),int(x1):int(x1+width)]
 
 cv2.rectangle(img_copy,
@@ -44,6 +49,7 @@ cv2.rectangle(img_copy,
               lineType =cv2.LINE_4,
               shift =0
               )
+##output  ROI image
 cv2.imwrite("selectedRoi.png", selectRoi_crop)
 cv2.imwrite("fixedRoi.png", fixedRoi_crop)
 cv2.imwrite("output.png",img_copy)
@@ -68,9 +74,14 @@ for f in files:
 
     img = cv2.imread(f)
     ##平均画素値を色素成分関数に入力して得られたヘモグロビン画像の値で取得
-    #pulsewave[i] = np.mean(ss.skinSeparation(img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2]),:],"Hemoglobin"))
-    pulsewave[i] = np.mean(img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2]),:])
+    
+    ##ROI
+    pulsewave[i] = np.mean(ss.skinSeparation(img[int(roi[1]):int(roi[1]+roi[3]),int(roi[0]):int(roi[0]+roi[2]),:],"Hemoglobin"))
+    
+    #fixedSIze
     #pulsewave[i] = np.mean(ss.skinSeparation(img[int(roi[1]):int(roi[1]+height),int(roi[0]):int(roi[0]+width),:],"Hemoglobin"))
+    
+    #fixedSize , fixed SIze
     #pulsewave[i] = np.mean(ss.skinSeparation(img[int(y1):int(y1+height),int(x1):int(x1+width),:],"Hemoglobin"))
     i += 1
 
