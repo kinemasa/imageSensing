@@ -6,7 +6,7 @@ import sys
 import csv
 import re
 import os
-import funcSkinSeparation2 as ss
+import _funcSkinSeparation2 as ss
 
 def getVideoROI(img):
     roi = cv2.selectROI(img)
