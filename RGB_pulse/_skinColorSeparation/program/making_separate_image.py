@@ -6,22 +6,23 @@ import sys
 import csv
 import re
 import os
-import funcSkinSeparation as ss
+import _funcSkinSeparation as ss
 
 
 ## input directory name
-dir_name = '/Volumes/Extreme SSD/murai3/murai32-me/'
-files = glob.glob(dir_name+'*')
-num = len(files)
-img_num = files[0]
-#img_num = "/Volumes/Extreme SSD/murai3/murai32-me/2023-07-06 16-41-10.554_murai32-me_594_593.bmp"
+# dir_name = 'D:\\muramatu\\muramatu-kao-open\\'
+
+# files = glob.glob(dir_name+'*')
+# num = len(files)
+# img_num = files[0]
+img_num = "C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\\image.bmp"
 
 ##import image
 img = cv2.imread(img_num)
 
 ## output name
-OUTPUT_DIR='/Users/masayakinefuchi/imageSensing/RGB_pulse/_skinColorSeparation/result/'
-subject ='murai32-me'
+OUTPUT_DIR='c:/Users/kine0/labo/imageSensing/RGB_pulse/_skinColorSeparation/result/'
+subject ='image'
 OUTPUT_FILE =OUTPUT_DIR +subject +'.png'
 
 ##output image

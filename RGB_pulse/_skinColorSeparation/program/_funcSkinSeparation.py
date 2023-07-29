@@ -14,8 +14,13 @@ def skinSeparation(GBR_img,output):
     Img_size = height * width
     
      # 色ベクトルと照明強度ベクトル
-    melanin    = np.array([ 0.4143, 0.3570, 0.8372 ])
-    hemoglobin = np.array([ 0.2988, 0.6838, 0.6657 ])
+     ##元データ
+    #melanin    = np.array([ 0.4143, 0.3570, 0.8372 ])
+    #hemoglobin = np.array([ 0.2988, 0.6838, 0.6657 ])
+
+    melanin    = np.array([0.440971,0.846892,0.297185])
+    hemoglobin = np.array([0.440971,0.846892,0.297185])
+    
     shading    = np.array([ 1.0000, 1.0000, 1.0000 ])
     
     vec =np.vstack([shading,melanin,hemoglobin])
