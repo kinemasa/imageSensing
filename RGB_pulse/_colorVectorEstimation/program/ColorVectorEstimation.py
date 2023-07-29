@@ -2,11 +2,8 @@ import cv2
 import numpy as np
 import _f_burel as f
 from scipy.optimize import fmin
-global sensor
-# 画像の読み込み
-# NShadow = 'C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\image.bmp'
-# SkinImage = 'C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\patch7.png'
 
+# 画像の読み込み
 NShadow = 'C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\skin7.png'
 SkinImage = 'C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\patch7.png'
 
@@ -93,13 +90,11 @@ PcomponentP = PVP @ (removeShadow - SMMat)
 Pstd = np.sqrt(np.mean(Pcomponent ** 2, axis=1))
 NM = np.diag(1 / Pstd)
 
-
 sensor = NM @ Pcomponent
 res = sensor
 
 # # Burelの独立評価値を最小化
 def f_burel(s):
-    f.f_burel(s,sensor,res)
     x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
     H = np.array([[x1, y1], [x2, y2]])
     TM = H @ NM @ PV
@@ -129,7 +124,7 @@ def f_burel(s):
 
 while True:
     s = np.random.rand(2) * np.pi
-    s = fmin(f.f_burel(s,sensor,res), s, xtol=1e-4, ftol=1e-8)
+    s = fmin(f_burel, s, xtol=1e-4, ftol=1e-8)
 
     x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
     H = np.array([[x1, y1], [x2, y2]])
