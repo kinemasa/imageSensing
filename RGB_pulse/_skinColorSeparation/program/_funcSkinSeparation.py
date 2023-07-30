@@ -18,8 +18,8 @@ def skinSeparation(GBR_img,output):
     #melanin    = np.array([ 0.4143, 0.3570, 0.8372 ])
     #hemoglobin = np.array([ 0.2988, 0.6838, 0.6657 ])
 
-    melanin    = np.array([0.440971,0.846892,0.297185])
-    hemoglobin = np.array([0.440971,0.846892,0.297185])
+    melanin    = np.array([0.2181,0.4763,0.8518])
+    hemoglobin = np.array([0.4352,0.6931,0.5746])
     
     shading    = np.array([ 1.0000, 1.0000, 1.0000 ])
     
@@ -101,7 +101,6 @@ def skinSeparation(GBR_img,output):
     # vec：独立成分ベクトル
     
     t = -(np.dot(housen[0],RGB_log[0])+np.dot(housen[1],RGB_log[1])+np.dot(housen[2],RGB_log[2]))/(np.dot(housen[0],vec[0,0])+np.dot(housen[1],vec[0,1])+np.dot(housen[2],vec[0,2]))
-    
     # 陰影除去
     # skin_flat：陰影除去したメラヘモベクトルの平面
     # rest：陰影成分
