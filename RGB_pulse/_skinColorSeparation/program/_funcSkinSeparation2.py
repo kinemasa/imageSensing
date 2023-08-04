@@ -1,6 +1,6 @@
 import numpy as np
 
-def skinSeparation(GBR_img,output):
+def skinSeparation(BGR_img,output):
     """
     openCVのimreadで読み込んだnumpy形式の画像を入力する．
     出力はunsigned 16bit int (uint16) 形式のヘモグロビン画像であるが，
@@ -10,7 +10,7 @@ def skinSeparation(GBR_img,output):
     peak上側検出のプログラム用に反転して出力
     """
     #import imagefile
-    height, width, channels = GBR_img.shape[:3]
+    height, width, channels = BGR_img.shape[:3]
     Img_size = height * width
     
      # color element
@@ -32,7 +32,7 @@ def skinSeparation(GBR_img,output):
     Bias = MinSkin
     
     ##　Making Mask
-    Mask = np.copy(GBR_img[:,:,0])
+    Mask = np.copy(BGR_img[:,:,0])
     Mask = np.where(Mask > 0, 1, 0)
     
     # init 
@@ -43,9 +43,9 @@ def skinSeparation(GBR_img,output):
 
    ##BGR -> RGB
 
-    Img_r = np.copy(GBR_img[:,:,2])
-    Img_g = np.copy(GBR_img[:,:,1])
-    Img_b = np.copy(GBR_img[:,:,0])
+    Img_r = np.copy(BGR_img[:,:,2])
+    Img_g = np.copy(BGR_img[:,:,1])
+    Img_b = np.copy(BGR_img[:,:,0])
 
     temp_R = np.reshape(Img_r, Img_size)
     temp_G = np.reshape(Img_g, Img_size)

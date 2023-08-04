@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def skinSeparation(GBR_img,output):
+def skinSeparation(BGR_img,output):
     """
     openCVのimreadで読み込んだnumpy形式の画像を入力する．
     出力はunsigned 16bit int (uint16) 形式のヘモグロビン画像であるが，
@@ -10,7 +10,7 @@ def skinSeparation(GBR_img,output):
     画像化する場合は出力された画像に対してnp.uint16(img)でキャストする必要がある．
     """
     #画像情報の取得
-    height, width, channels = GBR_img.shape[:3]
+    height, width, channels = BGR_img.shape[:3]
     Img_size = height * width
     
      # 色ベクトルと照明強度ベクトル
@@ -18,7 +18,7 @@ def skinSeparation(GBR_img,output):
     #melanin    = np.array([ 0.4143, 0.3570, 0.8372 ])
     #hemoglobin = np.array([ 0.2988, 0.6838, 0.6657 ])
 
-    melanin    = np.array([0.2181,0.4763,0.8518])
+    melanin    = np.array([0.296755,0.441382,0.846829])
     hemoglobin = np.array([0.4352,0.6931,0.5746])
     
     shading    = np.array([ 1.0000, 1.0000, 1.0000 ])
@@ -42,7 +42,7 @@ def skinSeparation(GBR_img,output):
     Bias = MinSkin
     
     ##Mask画像の生成
-    Mask = np.copy(GBR_img[:,:,0])
+    Mask = np.copy(BGR_img[:,:,0])
     Mask = np.where(Mask > 0, 1, 0)
     
     # 配列の初期化
@@ -53,9 +53,9 @@ def skinSeparation(GBR_img,output):
 
    ##BGR -> RGBの形に画像配列を変換する
 
-    Img_r = np.copy(GBR_img[:,:,2])
-    Img_g = np.copy(GBR_img[:,:,1])
-    Img_b = np.copy(GBR_img[:,:,0])
+    Img_r = np.copy(BGR_img[:,:,2])
+    Img_g = np.copy(BGR_img[:,:,1])
+    Img_b = np.copy(BGR_img[:,:,0])
 
     temp_R = np.reshape(Img_r, Img_size)
     temp_G = np.reshape(Img_g, Img_size)
