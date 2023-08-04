@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
-import _f_burel as f
 from scipy.optimize import fmin
-import warnings
 
 # 画像の読み込み
 NShadow = "C:\\Users\\kine0\\labo\\imageSensing\\RGB_pulse\\_colorVectorEstimation\\patch7.png"
@@ -104,116 +102,116 @@ sensor = NM @ Pcomponent
 
 res = sensor
 
-# """
-# # # Burelの独立評価値を最小化
-# """
-def factT(x):
-    countfactT = 1
-    for ifactT in range(1, x+1):
-        countfactT *= ifactT
-    return countfactT
+# # """
+# # # # Burelの独立評価値を最小化
+# # """
+# def factT(x):
+#     countfactT = 1
+#     for ifactT in range(1, x+1):
+#         countfactT *= ifactT
+#     return countfactT
 
-def GfunkT(ga1,ga2,gb1,gb2):
-    Sigma = 1
-    G = 1
+# def GfunkT(ga1,ga2,gb1,gb2):
+#     Sigma = 1
+#     G = 1
 
-    if (ga1 + gb1) % 2 == 0:
-        k = (ga1 + gb1) // 2
-        J2k = (factT(2 * k) * (2 * np.pi) ** 0.5) / (((4 ** k) * factT(k)) * (Sigma ** (2 * k - 1)))
-        sg = ((-1) ** ((ga1 - gb1) // 2) * J2k) / (factT(ga1) * factT(gb1))
-        G *= sg
-    else:
-        G = 0
+#     if (ga1 + gb1) % 2 == 0:
+#         k = (ga1 + gb1) // 2
+#         J2k = (factT(2 * k) * (2 * np.pi) ** 0.5) / (((4 ** k) * factT(k)) * (Sigma ** (2 * k - 1)))
+#         sg = ((-1) ** ((ga1 - gb1) // 2) * J2k) / (factT(ga1) * factT(gb1))
+#         G *= sg
+#     else:
+#         G = 0
 
-    if (ga2 + gb2) % 2 == 0:
-        k = (ga2 + gb2) // 2
-        J2k = (factT(2 * k) * (2 * np.pi) ** 0.5) / (((4 ** k) * factT(k)) / (Sigma ** (2 * k - 1)))
-        sg = ((-1) ** ((ga2 - gb2) // 2) * J2k) / (factT(ga2) * factT(gb2))
-        G *= sg
-    else:
-        G = 0
-    y = G
-    return y
+#     if (ga2 + gb2) % 2 == 0:
+#         k = (ga2 + gb2) // 2
+#         J2k = (factT(2 * k) * (2 * np.pi) ** 0.5) / (((4 ** k) * factT(k)) / (Sigma ** (2 * k - 1)))
+#         sg = ((-1) ** ((ga2 - gb2) // 2) * J2k) / (factT(ga2) * factT(gb2))
+#         G *= sg
+#     else:
+#         G = 0
+#     y = G
+#     return y
 
-def fmin_Cal_Cost_Burel(K,M,GfuncT):
-    CostGMM = 0
-    for a1 in range(K+1):
-        for a2 in range(K+1-a1):
-            for b1 in range(K+1):
-                for b2 in range(K+1-b1):
-                    CostGMM += GfuncT(a1, a2, b1, b2) * M[a1, a2] * M[b1, b2]
-    return CostGMM
+# def fmin_Cal_Cost_Burel(K,M,GfuncT):
+#     CostGMM = 0
+#     for a1 in range(K+1):
+#         for a2 in range(K+1-a1):
+#             for b1 in range(K+1):
+#                 for b2 in range(K+1-b1):
+#                     CostGMM += GfuncT(a1, a2, b1, b2) * M[a1, a2] * M[b1, b2]
+#     return CostGMM
 
-def fmin_Make_M(K,res):
-    M = np.zeros((K+1, K+1))
-    for m1 in range(K+1):
-        for m2 in range(K+1-m1):
-            E12 = np.mean((res[0, :]**m1) * (res[1, :]**m2))
-            E1E2 = np.mean(res[0, :]**m1) * np.mean(res[1, :]**m2)
-            M[m1, m2] =E12 - E1E2 
+# def fmin_Make_M(K,res):
+#     M = np.zeros((K+1, K+1))
+#     for m1 in range(K+1):
+#         for m2 in range(K+1-m1):
+#             E12 = np.mean((res[0, :]**m1) * (res[1, :]**m2))
+#             E1E2 = np.mean(res[0, :]**m1) * np.mean(res[1, :]**m2)
+#             M[m1, m2] =E12 - E1E2 
 
 
-    return M
+#     return M
 
-def f_burel(s):
-    x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
-    H = np.array([[x1, y1], [x2, y2]])
-    res = H @ sensor
+# def f_burel(s):
+#     x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
+#     H = np.array([[x1, y1], [x2, y2]])
+#     res = H @ sensor
 
-    # Cost Cal.
-    K = 3
-    M = fmin_Make_M(K,res)
+#     # Cost Cal.
+#     K = 3
+#     M = fmin_Make_M(K,res)
 
-    CostGMM = fmin_Cal_Cost_Burel(K,M,GfunkT)
+#     CostGMM = fmin_Cal_Cost_Burel(K,M,GfunkT)
     
-    return CostGMM
+#     return CostGMM
 
 
 
 
-while True:
-    s = np.random.rand(2) * np.pi
-    # s = fmin(f_burel, s, xtol=1e-4, ftol=1e-8)
-    # f_burel(s)
-    x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
-    H = np.array([[x1, y1], [x2, y2]])
+# while True:
+#     s = np.random.rand(2) * np.pi
+#     # s = fmin(f_burel, s, xtol=1e-4, ftol=1e-8)
+#     # f_burel(s)
+#     x1, y1, x2, y2 = np.cos(s[0]), np.sin(s[0]), np.cos(s[1]), np.sin(s[1])
+#     H = np.array([[x1, y1], [x2, y2]])
 
-    TM = H @ NM @ PV
-    InvTM = np.linalg.pinv(TM)
+#     TM = H @ NM @ PV
+#     InvTM = np.linalg.pinv(TM)
 
-    c_1 = InvTM @ np.array([[1], [0]])
-    c_2 = InvTM @ np.array([[0], [1]])
+#     c_1 = InvTM @ np.array([[1], [0]])
+#     c_2 = InvTM @ np.array([[0], [1]])
 
-    for i in range(3):
-        if c_1[i, 0] < 0:
-            c_1[i, 0] *= -1
-        if c_2[i, 0] < 0:
-            c_2[i, 0] *= -1
+#     for i in range(3):
+#         if c_1[i, 0] < 0:
+#             c_1[i, 0] *= -1
+#         if c_2[i, 0] < 0:
+#             c_2[i, 0] *= -1
 
-    if c_1[2, 0] > c_1[1, 0]:
-        melanin = c_1 / np.linalg.norm(c_1)
-        hemoglobin = c_2 / np.linalg.norm(c_2)
-    else:
-        melanin = c_2 / np.linalg.norm(c_2)
-        hemoglobin = c_1 / np.linalg.norm(c_1)
-    if (c_1 > 0).all() and (c_2 > 0).all():
-        break
+#     if c_1[2, 0] > c_1[1, 0]:
+#         melanin = c_1 / np.linalg.norm(c_1)
+#         hemoglobin = c_2 / np.linalg.norm(c_2)
+#     else:
+#         melanin = c_2 / np.linalg.norm(c_2)
+#         hemoglobin = c_1 / np.linalg.norm(c_1)
+#     if (c_1 > 0).all() and (c_2 > 0).all():
+#         break
 
-    print('エラー：色ベクトルが負の値です．')
-    flag = input('再試行：0 終了：1\n')
-    if flag == '1':
-        quit()
+#     print('エラー：色ベクトルが負の値です．')
+#     flag = input('再試行：0 終了：1\n')
+#     if flag == '1':
+#         quit()
 
-# # # 色素濃度の最小値を求める
-CompSynM = np.vstack((melanin.T, hemoglobin.T, np.array([[1, 1, 1]])))
-CompExtM = np.linalg.pinv(CompSynM)
-Compornent = CompExtM @ skin_flat
-MinComp = np.min(Compornent[:3], axis=0)
-MinSkin = MinComp[0] * melanin + MinComp[1] * hemoglobin + MinComp[2] * np.array([1, 1, 1])
+# # # # 色素濃度の最小値を求める
+# CompSynM = np.vstack((melanin.T, hemoglobin.T, np.array([[1, 1, 1]])))
+# CompExtM = np.linalg.pinv(CompSynM)
+# Compornent = CompExtM @ skin_flat
+# MinComp = np.min(Compornent[:3], axis=0)
+# MinSkin = MinComp[0] * melanin + MinComp[1] * hemoglobin + MinComp[2] * np.array([1, 1, 1])
 
-# # # Excelファイルへ情報を書き込む
-filename = 'MelaHemo.csv'
-write = np.hstack((melanin.flatten(), hemoglobin.flatten(), s))
-np.savetxt(filename, write.reshape(1, -1), delimiter=',', fmt='%f')
-np.savetxt('melanin.csv', melanin.reshape(1, -1), delimiter=',', fmt='%f')
-np.savetxt('hemoglobin.csv', hemoglobin.reshape(1, -1), delimiter=',', fmt='%f')
+# # # # Excelファイルへ情報を書き込む
+# filename = 'MelaHemo.csv'
+# write = np.hstack((melanin.flatten(), hemoglobin.flatten(), s))
+# np.savetxt(filename, write.reshape(1, -1), delimiter=',', fmt='%f')
+# np.savetxt('melanin.csv', melanin.reshape(1, -1), delimiter=',', fmt='%f')
+# np.savetxt('hemoglobin.csv', hemoglobin.reshape(1, -1), delimiter=',', fmt='%f')
